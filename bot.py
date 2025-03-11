@@ -2,12 +2,13 @@
 
 import re
 from sys import stderr
+import time
 
 from aiogram import Bot, Dispatcher, F
 from aiogram.types import Message
 from dotenv import dotenv_values
 from loguru import logger
-from peewee import BooleanField, CharField, IntegerField, Model
+from peewee import BooleanField, CharField, BigIntegerField, Model
 from playhouse.postgres_ext import PostgresqlExtDatabase
 
 from refer import async_login_with_invite_code
@@ -24,7 +25,7 @@ db = PostgresqlExtDatabase(
 )
 
 class User(Model):
-    user_id = IntegerField(unique=True)
+    user_id = BigIntegerField(unique=True)
     username = CharField(null=True)
     first_name = CharField(null=True)
     last_name = CharField(null=True)
@@ -53,6 +54,7 @@ PROXY = config.get("PROXY", None)
 
 dp = Dispatcher()
 
+users_last_messages = {}
 
 @dp.message(F.chat.type == "private")
 async def start(message: Message):
@@ -85,9 +87,13 @@ async def start(message: Message):
             logger.info(
                 f"Status Code: {status_code} | Response Body: {str(response_body)[12:]}"
             )
-            await message.answer(
-                "<b>❤️ Успешно отправил вам кофе</b>\n\n<b>❤️ Successfully sent you coffee</b>"
-            )
+            # if last message was more than 5 seconds ago, send message
+            if time.time() - users_last_messages.get(user.user_id, 0) >= 5:
+                await message.answer(
+                    "<b>❤️ Успешно отправил вам кофе</b>\n\n<b>❤️ Successfully sent you coffee</b>"
+                )
+                users_last_messages[user.user_id] = time.time()
+            
         else:
             await message.answer(
                 "<b>😈 Отправь мне свой инвайт-код:</b>\n\n<b>😈 Send me your invite code:</b>"
