@@ -115,7 +115,7 @@ async def coffee(message: Message):
         await message.answer(usage)
 
 
-COFFEE_WAIT = 1 * 60  # 5 min
+COFFEE_WAIT = 2 * 60  # 2 min
 
 @dp.message(F.chat.type == "private")
 async def start(message: Message):
@@ -139,7 +139,7 @@ async def start(message: Message):
 
         if refcode:
             valid = is_version_valid()
-            
+
             if not valid:
                 await message.answer(
                     "<b>💔 Версия приложения была обновлена, ожидайте обновления</b>\n\n"
@@ -173,8 +173,8 @@ async def start(message: Message):
                        logger.error(f"[{r}] Request Error: {e}")
 
                 await message.answer(
-                    "<b>❤️ Успешно отправил вам кофе, следующий кофе через 1 минуту</b>\n\n"
-                    "<b>❤️ Successfully sent you coffee, next coffee in 1 minute</b>\n\n"
+                    "<b>❤️ Успешно отправил вам кофе, следующий кофе через 2 минуты</b>\n\n"
+                    "<b>❤️ Successfully sent you coffee, next coffee in 2 minutes</b>\n\n"
 
                     "🐙 <b>Source:</b> https://github.com/makarworld/StatusAIFreeCoffee\n"
                     "❤️‍🔥 <b>Channel:</b> @StatusAIFree\n"
