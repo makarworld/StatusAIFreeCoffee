@@ -1,11 +1,13 @@
 # @StatusAIEnergyBot
 
+import asyncio
 import re
 from sys import stderr
 import time
 
 from aiogram import Bot, Dispatcher, F
 from aiogram.types import Message
+from aiogram.filters.command import Command
 from dotenv import dotenv_values
 from loguru import logger
 from peewee import BooleanField, CharField, BigIntegerField, Model
@@ -55,6 +57,7 @@ PROXY = config.get("PROXY", None)
 dp = Dispatcher()
 
 users_last_messages = {}
+coffee_count = {}
 
 @dp.message(F.chat.type == "private")
 async def start(message: Message):
@@ -85,14 +88,18 @@ async def start(message: Message):
                 refcode, proxy=PROXY
             )
             logger.info(
-                f"Status Code: {status_code} | Response Body: {str(response_body)[12:]}"
+                f"Status Code: {status_code} | Response Body: {str(response_body)[:12]}"
             )
             # if last message was more than 5 seconds ago, send message
             if time.time() - users_last_messages.get(user.user_id, 0) >= 5:
+                count = coffee_count.get(user.user_id, 1)
                 await message.answer(
-                    "<b>❤️ Успешно отправил вам кофе</b>\n\n<b>❤️ Successfully sent you coffee</b>"
+                    f"<b>❤️ Успешно отправил вам {count} кофе</b>\n\n<b>❤️ Successfully sent you {count} coffee</b>"
                 )
                 users_last_messages[user.user_id] = time.time()
+                coffee_count.pop(user.user_id)
+            else:
+                coffee_count[user.user_id] = (coffee_count.get(user.user_id, 0) + 1)
             
         else:
             await message.answer(
@@ -101,6 +108,31 @@ async def start(message: Message):
 
     except Exception as e:
         logger.exception(f"Error: {e}")
+
+@dp.message(F.chat.type == "private", Command("mailing"))
+async def mailing(message: Message):
+    user: User = User.get_or_none(user_id = message.from_user.id)
+    if not user or not user.is_admin:
+        return
+
+    users = User.select()
+
+    message = (
+        "<b>Спасибо за использование бота ❤️</b>\n\n"
+        "<b>В связи с огромным потоком сообщений бот будет отвечать на них раз в 5 секунд</b>\n"
+        "<b>Канал с новостями:</b> @StatusAIFree"
+    )
+
+    for user in users:
+        try:
+            await bot.send_message(user.user_id, message)
+            logger.info(f"Sent mailing to {user.user_id}")
+        except Exception as e:
+            logger.exception(f"Error: {e}")
+        
+        await asyncio.sleep(0.5)
+    
+    await message.answer("<b>✅ Отправлено</b>")
 
 
 if __name__ == "__main__":
