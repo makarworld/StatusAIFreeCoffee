@@ -141,13 +141,17 @@ async def start(message: Message):
                 user.save()
 
                 users_last_coffee[user.user_id] = time.time()
-                
-                status_code, response_body = await async_login_with_invite_code(
-                    refcode, proxy=PROXY
-                )
-                logger.info(
-                    f"[{refcode}] Status Code: {status_code} | Response Body: {str(response_body)[:12]}"
-                )
+                for r in range(3):
+                    try:
+                        status_code, response_body = await async_login_with_invite_code(
+                            refcode, proxy=PROXY
+                        )
+                        logger.info(
+                            f"[{refcode}] Status Code: {status_code} | Response Body: {str(response_body)[:12]}"
+                        )
+                        break
+                    except Exception as e:
+                        logger.error(f"[{r}] Request Error: {e}")
 
                 await message.answer(
                     "<b>❤️ Успешно отправил вам кофе, следующий кофе через 1 минуту</b>\n\n"
