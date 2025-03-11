@@ -36,6 +36,7 @@ async def get_apk_version() -> tuple[str, str]:
         response = await session.get(
             "https://apkcombo.app/downloader/?package=link.socialai.app&ajax=1"
         )
+        print(response.text)
 
         build = re.search(build_pattern, response.text).group(1)
         version = re.search(version_pattern, response.text).group(1)

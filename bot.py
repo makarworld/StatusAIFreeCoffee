@@ -184,7 +184,11 @@ async def start(message: Message):
         else:
             await message.answer(
                 "<b>🤰 Отправь мне свой инвайт-код:</b>\n\n"
-                "<b>🤰 Send me your invite code:</b>"
+                "<b>🤰 Send me your invite code:</b>\n\n"
+                
+                "🐙 <b>Source:</b> https://github.com/makarworld/StatusAIFreeCoffee\n"
+                "❤️‍🔥 <b>Channel:</b> @StatusAIFree\n"
+                "🧩 <b>Creator:</b> @abuztrade"
             )
 
     except Exception as e:
