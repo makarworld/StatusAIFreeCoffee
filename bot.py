@@ -56,7 +56,7 @@ PROXY = config.get("PROXY", None)
 
 dp = Dispatcher()
 
-users_last_messages = {}
+users_last_coffee = {}
 
 def check_user(tg_user: TelegramUser) -> User:
     user: User = User.get_or_none(user_id = tg_user.id)
@@ -119,6 +119,7 @@ async def coffee(message: Message):
         logger.error(f"Error: {e}")
         await message.answer(usage)
 
+COFFEE_WAIT = 3 * 60 # 5 min
 
 @dp.message(F.chat.type == "private")
 async def start(message: Message):
@@ -132,22 +133,28 @@ async def start(message: Message):
         refcode = re.findall(r"[0-9a-zA-Z]{10}", message.text or "")
 
         if refcode:
-            refcode = refcode[0]
-            user.last_refcode = refcode
-            user.save()
-            
-            status_code, response_body = await async_login_with_invite_code(
-                refcode, proxy=PROXY
-            )
-            logger.info(
-                f"Status Code: {status_code} | Response Body: {str(response_body)[:12]}"
-            )
-            # if last message was more than 5 seconds ago, send message
-            if time.time() - users_last_messages.get(user.user_id, 0) >= 5:
-                await message.answer(
-                    "<b>❤️ Успешно отправил вам кофе</b>\n\n<b>❤️ Successfully sent you coffee</b>"
+            # if last coffee was more than 5 min ago, add
+            if time.time() - users_last_coffee.get(user.user_id, 0) >= COFFEE_WAIT or user.is_admin:
+                refcode = refcode[0]
+                user.last_refcode = refcode
+                user.save()
+                
+                status_code, response_body = await async_login_with_invite_code(
+                    refcode, proxy=PROXY
                 )
-                users_last_messages[user.user_id] = time.time()
+                logger.info(
+                    f"Status Code: {status_code} | Response Body: {str(response_body)[:12]}"
+                )
+
+                await message.answer(
+                    "<b>❤️ Успешно отправил вам кофе, следующий кофе через 5 минут</b>\n\n<b>❤️ Successfully sent you coffee, next coffee in 5 minutes</b>"
+                )
+                users_last_coffee[user.user_id] = time.time()
+            else:
+                wait_sec = COFFEE_WAIT - (time.time() - users_last_coffee[user.user_id])
+                await message.answer(
+                    f"<b>💋 {wait_sec} сек до следующего кофе</b> <i>(ожидание введено для того чтобы меньше нагружать сервера игры)</i>\n\n<b>💋 {wait_sec} seconds until the next coffee</b> <i>(waiting is done to not overload the game server)</i>"
+                )
             
         else:
             await message.answer(
