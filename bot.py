@@ -12,7 +12,7 @@ from dotenv import dotenv_values
 from peewee import BigIntegerField, BooleanField, CharField, Model
 from playhouse.postgres_ext import PostgresqlExtDatabase
 
-from refer import async_login_with_invite_code, logger
+from refer import async_login_with_invite_code, logger, is_version_valid
 
 config = dotenv_values(".env")
 DB_NAME = config.get("DB_NAME", "postgres")
@@ -117,7 +117,6 @@ async def coffee(message: Message):
 
 COFFEE_WAIT = 1 * 60  # 5 min
 
-
 @dp.message(F.chat.type == "private")
 async def start(message: Message):
     try:
@@ -139,6 +138,18 @@ async def start(message: Message):
         refcode = re.findall(r"[0-9a-zA-Z]{10}", message.text or "")
 
         if refcode:
+            valid = is_version_valid()
+            
+            if not valid:
+                await message.answer(
+                    "<b>💔 Версия приложения была обновлена, ожидайте обновления</b>\n\n"
+                    "<b>💔 The app version has been updated, please wait for the update.</b>\n\n"
+
+                    "🐙 <b>Source:</b> https://github.com/makarworld/StatusAIFreeCoffee\n"
+                    "❤️‍🔥 <b>Channel:</b> @StatusAIFree\n"
+                    "🧩 <b>Creator:</b> @abuztrade"
+                )
+
             # if last coffee was more than 5 min ago, add
             if (
                 time.time() - users_last_coffee.get(user.user_id, 0) >= COFFEE_WAIT
@@ -164,6 +175,7 @@ async def start(message: Message):
                 await message.answer(
                     "<b>❤️ Успешно отправил вам кофе, следующий кофе через 1 минуту</b>\n\n"
                     "<b>❤️ Successfully sent you coffee, next coffee in 1 minute</b>\n\n"
+
                     "🐙 <b>Source:</b> https://github.com/makarworld/StatusAIFreeCoffee\n"
                     "❤️‍🔥 <b>Channel:</b> @StatusAIFree\n"
                     "🧩 <b>Creator:</b> @abuztrade"
@@ -185,7 +197,7 @@ async def start(message: Message):
             await message.answer(
                 "<b>🤰 Отправь мне свой инвайт-код:</b>\n\n"
                 "<b>🤰 Send me your invite code:</b>\n\n"
-                
+
                 "🐙 <b>Source:</b> https://github.com/makarworld/StatusAIFreeCoffee\n"
                 "❤️‍🔥 <b>Channel:</b> @StatusAIFree\n"
                 "🧩 <b>Creator:</b> @abuztrade"
