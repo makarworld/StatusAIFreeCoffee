@@ -92,12 +92,12 @@ async def start(message: Message):
             )
             # if last message was more than 5 seconds ago, send message
             if time.time() - users_last_messages.get(user.user_id, 0) >= 5:
-                count = coffee_count.get(user.user_id, 1)
+                count = coffee_count.get(user.user_id, 1) or 1
                 await message.answer(
                     f"<b>❤️ Успешно отправил вам {count} кофе</b>\n\n<b>❤️ Successfully sent you {count} coffee</b>"
                 )
                 users_last_messages[user.user_id] = time.time()
-                coffee_count.pop(user.user_id)
+                coffee_count[user.user_id] = 0
             else:
                 coffee_count[user.user_id] = (coffee_count.get(user.user_id, 0) + 1)
             
