@@ -57,6 +57,7 @@ PROXY = config.get("PROXY", None)
 dp = Dispatcher()
 
 users_last_coffee = {}
+users_last_message = {}
 
 def check_user(tg_user: TelegramUser) -> User:
     user: User = User.get_or_none(user_id = tg_user.id)
@@ -145,7 +146,7 @@ async def start(message: Message):
                     refcode, proxy=PROXY
                 )
                 logger.info(
-                    f"Status Code: {status_code} | Response Body: {str(response_body)[:12]}"
+                    f"[{refcode}] Status Code: {status_code} | Response Body: {str(response_body)[:12]}"
                 )
 
                 await message.answer(
@@ -156,13 +157,15 @@ async def start(message: Message):
                     "❤️‍🔥 <b>Channel:</b> @StatusAIFree\n"
                     "🧩 <b>Creator:</b> @abuztrade"
                 )
-                
+
             else:
-                wait_sec = COFFEE_WAIT - (time.time() - users_last_coffee[user.user_id])
-                await message.answer(
-                    f"<b>💋 {wait_sec:.0f} сек до следующего кофе</b> <i>(ожидание введено для того чтобы меньше нагружать сервера игры)</i>\n\n"
-                    f"<b>💋 {wait_sec:.0f} seconds until the next coffee</b> <i>(waiting is done to not overload the game server)</i>"
-                )
+                if time.time() - users_last_message.get(user.user_id, 0) >= 5 or user.is_admin:
+                    wait_sec = COFFEE_WAIT - (time.time() - users_last_coffee[user.user_id])
+                    await message.answer(
+                        f"<b>💋 {wait_sec:.0f} сек до следующего кофе</b> <i>(ожидание введено для того чтобы меньше нагружать сервера игры)</i>\n\n"
+                        f"<b>💋 {wait_sec:.0f} seconds until the next coffee</b> <i>(waiting is done to not overload the game server)</i>"
+                    )
+                    users_last_message[user.user_id] = time.time()
             
         else:
             await message.answer(
