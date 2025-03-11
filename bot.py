@@ -119,7 +119,7 @@ async def coffee(message: Message):
         logger.error(f"Error: {e}")
         await message.answer(usage)
 
-COFFEE_WAIT = 3 * 60 # 5 min
+COFFEE_WAIT = 1 * 60 # 5 min
 
 @dp.message(F.chat.type == "private")
 async def start(message: Message):
@@ -147,7 +147,7 @@ async def start(message: Message):
                 )
 
                 await message.answer(
-                    "<b>❤️ Успешно отправил вам кофе, следующий кофе через 5 минут</b>\n\n<b>❤️ Successfully sent you coffee, next coffee in 5 minutes</b>"
+                    "<b>❤️ Успешно отправил вам кофе, следующий кофе через 1 минуту</b>\n\n<b>❤️ Successfully sent you coffee, next coffee in 1 minute</b>"
                 )
                 users_last_coffee[user.user_id] = time.time()
             else:
