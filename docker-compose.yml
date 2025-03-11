@@ -1,0 +1,89 @@
+services:
+  pybase:
+    container_name: pybase
+
+    image: pybase
+
+    build:
+      context: .
+      dockerfile: pybase.Dockerfile
+
+    volumes:
+      - .:/app
+
+  statusaibot:
+    container_name: statusaibot
+
+    image: statusaibot
+
+    build:
+      context: .
+      dockerfile: statusaibot.Dockerfile
+
+    environment:
+      PYTHONUNBUFFERED: 1
+      DOCKER: "true"
+
+    volumes:
+      - .:/app
+
+
+  uniserver:
+    container_name: uniserver
+
+    image: uniserver
+    depends_on:
+      - pybase
+      - redis
+      - postgres
+
+    ports:
+      - "3055:3055"
+
+    build:
+      context: .
+      dockerfile: uniserver.Dockerfile
+
+    environment:
+      PYTHONUNBUFFERED: 1
+      DOCKER: "true"
+
+    volumes:
+      - .:/app
+
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    
+    ports:
+      - "80:80"
+      - "443:443"
+
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/certs:/etc/nginx/certs
+
+    restart: unless-stopped
+
+
+  api:
+    container_name: api
+
+    image: api
+    depends_on:
+      - pybase
+
+    ports:
+      - "8080:8080"
+
+    build:  
+      context: .
+      dockerfile: api.Dockerfile
+
+    environment:
+      PYTHONUNBUFFERED: 1
+      DOCKER: "true"
+
+    volumes:
+      - .:/app
