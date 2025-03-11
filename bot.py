@@ -131,6 +131,16 @@ async def start(message: Message):
 
         user: User = check_user(message.from_user)
 
+        await message.answer(
+            "<b>💔 Работа бота временно преостановлена из-за блокировок</b>\n\n"
+            "<b>❤️ The bot's work is temporarily suspended due to blockages</b>\n\n"
+
+            "🐙 <b>Source:</b> https://github.com/makarworld/StatusAIFreeCoffee\n"
+            "❤️‍🔥 <b>Channel:</b> @StatusAIFree\n"
+            "🧩 <b>Creator:</b> @abuztrade"
+        )
+        return
+
         refcode = re.findall(r"[0-9a-zA-Z]{10}", message.text or "")
 
         if refcode:
