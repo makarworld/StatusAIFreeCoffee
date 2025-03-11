@@ -48,12 +48,12 @@ async def async_login_with_invite_code(invite_code: str, proxy: dict = None):
         "accept": "application/json, text/plain, */*",
         "Accept-Encoding": "gzip",
         "app": "SOCIALAI",
-        "build": "28",
+        "build": "29",
         "Connection": "Keep-Alive",
         "device-id": device_id,
         "Host": "social-ai-prod.uc.r.appspot.com",
         "User-Agent": "okhttp/4.12.0",
-        "version": "1.3.1",
+        "version": "1.3.2",
     }
 
     # Определяем данные формы
