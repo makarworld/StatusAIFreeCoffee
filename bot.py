@@ -57,7 +57,6 @@ PROXY = config.get("PROXY", None)
 dp = Dispatcher()
 
 users_last_messages = {}
-coffee_count = {}
 
 @dp.message(F.chat.type == "private")
 async def start(message: Message):
@@ -92,14 +91,10 @@ async def start(message: Message):
             )
             # if last message was more than 5 seconds ago, send message
             if time.time() - users_last_messages.get(user.user_id, 0) >= 5:
-                count = coffee_count.get(user.user_id, 1) or 1
                 await message.answer(
-                    f"<b>❤️ Успешно отправил вам {count} кофе</b>\n\n<b>❤️ Successfully sent you {count} coffee</b>"
+                    "<b>❤️ Успешно отправил вам кофе</b>\n\n<b>❤️ Successfully sent you coffee</b>"
                 )
                 users_last_messages[user.user_id] = time.time()
-                coffee_count[user.user_id] = 0
-            else:
-                coffee_count[user.user_id] = (coffee_count.get(user.user_id, 0) + 1)
             
         else:
             await message.answer(
@@ -107,7 +102,7 @@ async def start(message: Message):
             )
 
     except Exception as e:
-        logger.exception(f"Error: {e}")
+        logger.error(f"Error: {e}")
 
 @dp.message(F.chat.type == "private", Command("mailing"))
 async def mailing(message: Message):
