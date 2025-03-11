@@ -41,11 +41,11 @@ async def start(message: Message):
             status_code, response_body = await async_login_with_invite_code(refcode)
             logger.info(f"Status Code: {status_code} | Response Body: {response_body}")
             await message.answer(
-                "❤️ Успешно отправил вам кофе <3\n\n❤️ Successfully sent you coffee <3"
+                "<b>❤️ Успешно отправил вам кофе</b>\n\n<b>❤️ Successfully sent you coffee</b>"
             )
         else:
             await message.answer(
-                "😈 Отправь мне свой инвайт-код:\n\n😈 Send me your invite code:"
+                "<b>😈 Отправь мне свой инвайт-код:</b>\n\n<b>😈 Send me your invite code:</b>"
             )
 
     except Exception as e:
