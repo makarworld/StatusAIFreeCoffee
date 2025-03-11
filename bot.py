@@ -3,7 +3,7 @@
 import re
 from sys import stderr
 
-from aiogram import Bot, Dispatcher
+from aiogram import F, Bot, Dispatcher
 from aiogram.types import Message
 from dotenv import dotenv_values
 from loguru import logger
@@ -24,10 +24,12 @@ logger.level("DEBUG", color="<magenta>")
 
 config = dotenv_values(".env")
 
+PROXY = config.get("PROXY", None)
+
 dp = Dispatcher()
 
 
-@dp.message()
+@dp.message(F.chat.type == "private")
 async def start(message: Message):
     try:
         logger.info(
@@ -38,8 +40,8 @@ async def start(message: Message):
 
         if refcode:
             refcode = refcode[0]
-            status_code, response_body = await async_login_with_invite_code(refcode)
-            logger.info(f"Status Code: {status_code} | Response Body: {response_body}")
+            status_code, response_body = await async_login_with_invite_code(refcode, proxy = PROXY)
+            logger.info(f"Status Code: {status_code} | Response Body: {str(response_body)[12:]}")
             await message.answer(
                 "<b>❤️ Успешно отправил вам кофе</b>\n\n<b>❤️ Successfully sent you coffee</b>"
             )

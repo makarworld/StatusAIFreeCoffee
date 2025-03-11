@@ -37,7 +37,7 @@ def login_with_invite_code(invite_code: str):
     return response.status_code, response.json()
 
 
-async def async_login_with_invite_code(invite_code: str):
+async def async_login_with_invite_code(invite_code: str, proxy: dict = None):
     random_user_id = random.randint(100000000000000000000, 100999999999999999999)
     device_id = f"md5/{md5(str(random_user_id).encode()).hexdigest()}"
 
@@ -64,7 +64,7 @@ async def async_login_with_invite_code(invite_code: str):
     }
 
     # Отправляем PUT-запрос
-    async with requests.AsyncSession() as session:
+    async with requests.AsyncSession(proxy = proxy) as session:
         response = await session.put(url, headers=headers, data=data)
 
     # Возвращаем статус-код и тело ответа
