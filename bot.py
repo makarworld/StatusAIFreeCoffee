@@ -138,6 +138,8 @@ async def start(message: Message):
                 refcode = refcode[0]
                 user.last_refcode = refcode
                 user.save()
+
+                users_last_coffee[user.user_id] = time.time()
                 
                 status_code, response_body = await async_login_with_invite_code(
                     refcode, proxy=PROXY
@@ -154,12 +156,12 @@ async def start(message: Message):
                     "❤️‍🔥 <b>Channel:</b> @StatusAIFree\n"
                     "🧩 <b>Creator:</b> @abuztrade"
                 )
-                users_last_coffee[user.user_id] = time.time()
+                
             else:
                 wait_sec = COFFEE_WAIT - (time.time() - users_last_coffee[user.user_id])
                 await message.answer(
-                    f"<b>💋 {wait_sec} сек до следующего кофе</b> <i>(ожидание введено для того чтобы меньше нагружать сервера игры)</i>\n\n"
-                    f"<b>💋 {wait_sec} seconds until the next coffee</b> <i>(waiting is done to not overload the game server)</i>"
+                    f"<b>💋 {wait_sec:.0f} сек до следующего кофе</b> <i>(ожидание введено для того чтобы меньше нагружать сервера игры)</i>\n\n"
+                    f"<b>💋 {wait_sec:.0f} seconds until the next coffee</b> <i>(waiting is done to not overload the game server)</i>"
                 )
             
         else:
