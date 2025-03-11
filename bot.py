@@ -61,14 +61,16 @@ async def start(message: Message):
             f"User: @{message.from_user.username} |  ID: {message.from_user.id} | Text: {message.text}"
         )
 
-        user, _ = User.get_or_create(user_id = message.from_user.id)
-        user: User 
-
-        user.username = message.from_user.username
-        user.first_name = message.from_user.first_name
-        user.last_name = message.from_user.last_name
-        user.save()
-
+        user: User = User.get_or_none(user_id = message.from_user.id)
+        if not user:
+            user = User(
+                user_id = message.from_user.id,
+                username = message.from_user.username,
+                first_name = message.from_user.first_name,
+                last_name = message.from_user.last_name,
+                is_admin = False
+            )
+            user.save()
 
         refcode = re.findall(r"[0-9a-zA-Z]{10}", message.text or "")
 

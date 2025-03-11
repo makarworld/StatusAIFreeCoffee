@@ -2,3 +2,4 @@ curl-cffi
 python-dotenv
 aiogram
 loguru
+peewee
