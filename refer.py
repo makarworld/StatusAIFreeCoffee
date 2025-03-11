@@ -118,7 +118,7 @@ async def async_login_with_invite_code(invite_code: str, proxy: dict = None):
     # Отправляем PUT-запрос
     async with requests.AsyncSession(proxy=proxy) as session:
         response = await session.put(url, headers=headers, data=data)
-    print(response.text)
+
     # Возвращаем статус-код и тело ответа
     return response.status_code, response.json()
 
