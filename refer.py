@@ -18,8 +18,8 @@ logger.add(
 logger.level("DEBUG", color="<magenta>")
 
 
-VERSION = "1.3.3"
-BUILD = "30"
+VERSION = "1.3.4"
+BUILD = "31"
 
 valid_check: list = None
 

@@ -149,6 +149,7 @@ async def start(message: Message):
                     "❤️‍🔥 <b>Channel:</b> @StatusAIFree\n"
                     "🧩 <b>Creator:</b> @abuztrade"
                 )
+                return
 
             # if last coffee was more than 5 min ago, add
             if (
