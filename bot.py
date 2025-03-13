@@ -126,14 +126,15 @@ async def start(message: Message):
 
         user: User = check_user(message.from_user)
 
-        # await message.answer(
-        #    "<b>💔 Работа бота временно преостановлена из-за блокировок</b>\n\n"
-        #    "<b>❤️ The bot's work is temporarily suspended due to blockages</b>\n\n"
-        #    "🐙 <b>Source:</b> https://github.com/makarworld/StatusAIFreeCoffee\n"
-        #    "❤️‍🔥 <b>Channel:</b> @StatusAIFree\n"
-        #    "🧩 <b>Creator:</b> @abuztrade"
-        # )
-        # return
+        await message.answer(
+           "<b>💔 Проблемы с поставками кофе... \n"
+           "Разбираемся с этими капиталистами тут @StatusFanRP</b>\n"
+            "<i>РП по статусу, вы можете создать канал персонажа и писать от его имени</i>\n\n"
+           "❤️‍🔥 <b>Channel:</b> @StatusAIFree\n"
+           "🕊 <b>RP:</b> @StatusFanRP"
+           "🧩 <b>Creator:</b> @abuztrade"
+        )
+        return
 
         refcode = re.findall(r"[0-9a-zA-Z]{10}", message.text or "")
 
@@ -217,9 +218,12 @@ async def mailing(message: Message):
     users = User.select()
 
     message = (
-        "<b>Спасибо за использование бота ❤️</b>\n\n"
-        "<b>В связи с огромным потоком сообщений бот будет отвечать на них раз в 5 секунд</b>\n"
-        "<b>Канал с новостями:</b> @StatusAIFree"
+        "<b>💔 Проблемы с поставками кофе... \n"
+        "Разбираемся с этими капиталистами тут @StatusFanRP</b>\n"
+        "<i>РП по статусу, вы можете создать канал персонажа и писать от его имени</i>\n\n"
+        "❤️‍🔥 <b>Channel:</b> @StatusAIFree\n"
+        "🕊 <b>RP:</b> @StatusFanRP"
+        "🧩 <b>Creator:</b> @abuztrade"
     )
 
     for user in users:
